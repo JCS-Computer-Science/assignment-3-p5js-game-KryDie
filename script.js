@@ -24,6 +24,9 @@ let player = {
 let obstacles = []
 let carColors = ['#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c']
 
+let playerImg = loadImage('')
+let obstacleImg = loadImage('')
+
 function setup(){
     let cnv = createCanvas(1200, 900)
     let x = (windowWidth - width) / 2
@@ -72,8 +75,12 @@ function drawLanes(){
     }
 }
 
-function drawCar(){
-    rect()
+function drawCar(x, y, isPlayer){
+    if(isPlayer){
+        image(playerImg, x-30, y - 50, 60, 100)
+    }else {
+        image(obstacleImg, x-30, y-50, 60, 100)
+    }
 }
 
 function spawnObstacle(){
