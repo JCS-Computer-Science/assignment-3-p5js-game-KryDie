@@ -73,7 +73,7 @@ function drawLanes(){
 }
 
 function drawCar(){
-
+    rect()
 }
 
 function spawnObstacle(){
@@ -97,9 +97,31 @@ function moveDrawObs(){
         }else if (obstacles[i].type == 'car'){
             drawCar(obstacles[i].x, obstacles[i].y, obstacles[i].col, false)
         }else {
-            drawPothole(obsatcles[i])
+            drawPothole(obstacles[i])
         }
     }
+    
+}
+
+function checkCollision(){
+    for (let obs of obstacles){
+        if (obs.type == 'car'){
+            if (abs(player.x - obs.x) < 52 && abs(player.y - obs.y) < 95) game.over = true
+        } else {
+            if (dist(player.x, player.y, obs.x, obs.y) < obs.size * 0.45 + 22) game.over = true
+        }
+    }
+}
+
+function drawHud(){
+    fill('white'); noStroke(); textSize(22); textAlign(LEFT)
+    text('SCORE: ' + floor(game.score / 10), 20, 40)
+    text('SPEED: ' + game.speed, 20, 65)
+    textAlign(RIGHT)
+    text('← → to switch lanes', width - 20, 40)
+}
+
+function startScreen(){
     
 }
 function keyPressed(){
