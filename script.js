@@ -39,14 +39,14 @@ function draw(){
         startScreen()
         return
     }else if (game.over){
-        endScreen()
+        gameOver()
         return
     }
 
-    background("green")
-    fill(90,90,90); noStroke()
+    background("green") //grass
+    fill(90,90,90); noStroke()  //road
     rect(350,0,500,900)
-    fill('yellow')
+    fill('yellow')  //highlight
     rect(350, 0, 8, 900)
     rect(842, 0, 8, 900)
 
@@ -57,8 +57,19 @@ function draw(){
 
     game.spawnTimer++
     if(game.spawnTimer >= game.spawnEvery){
-
+        spawnObstacle()
+        game.spawnTimer = 0
+        game.spawnEvery = round(random(35, 65))
     }
+
+    moveDrawObs()
+    drawCar(player.x, player.y, true)
+    checkCollision()
+
+    game.score++
+    game.speed = 5 + floor(game.score / 300)
+
+    drawHud()
 }
 
 function drawLanes(){
@@ -68,8 +79,8 @@ function drawLanes(){
         rect(495, yPos, 8, 80)
         rect(695, yPos, 8, 80)
     }
-    
     road.laneY += flow
+    
     if(road.laneY >= road.spacing){
         data.lane.y = 0
     }
@@ -129,15 +140,51 @@ function drawHud(){
 }
 
 function startScreen(){
-    
+    background('#0f122e')
+    fill('#edf10f'); textAlign(CENTER); textSize(62)
+    text('HIGHWAY DASH', width / 2, 320)
+    fill('white'); textSize(24)
+    text('Dodge traffic and avoid potholes!', width / 2, 390)
+    text('Use  ←  →  arrow keys to switch lanes', width / 2, 430)
+    fill('#2ecc71'); rect(width/2 - 110, 490, 220, 55, 10)
+    fill('#1a1a2e'); textSize(26)
+    text('PRESS SPACE', width / 2, 525)
+}
+
+function gameOver(){
+    fill(0, 0, 0, 160); rect(0, 0, width, height)
+    fill('#e74c3c'); textAlign(CENTER); textSize(70)
+    text('GAME OVER', width / 2, height / 2 - 60)
+    fill('white'); textSize(30)
+    text('Score: ' + floor(game.score / 10), width / 2, height / 2 + 10)
+    fill('#edf10f'); textSize(22)
+    text('Press SPACE to play again', width / 2, height / 2 + 70)
+}
+
+function restart(){
+    obstacles = []
+    game.score = 0
+    game.speed = 5
+    game.over = false 
+    game.spawnTimer = 0
+    game.spawnEvery = 55
+    player.lane = 1
+    player.x = road.laneX[player.lane]
 }
 function keyPressed(){
-    let velX = data.cars.velX
-    let velY = data.cars.velY
-
-    if(keyCode == LEFT_ARROW){
-        velX *= -1
-    }else if(keyCode == RIGHT_ARROW){
-        velX *=1
+    if (!game.started && key == ' '){
+        game.started = true
+        return
+    }
+    if (game.over && key == ' '){
+        restart()
+        return
+    }
+    if (!game.over){
+        if (keyCode == LEFT_ARROW && player.lane > 0){
+            player.lane--
+        }else if (keyCode == RIGHT_ARROW && player.lane < 2){
+            player.lane++
+        }
     }
 }
