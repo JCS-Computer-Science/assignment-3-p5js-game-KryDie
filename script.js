@@ -8,7 +8,7 @@ let game = {
 }
 
 let road = {
-    laneX: [430,600,770],
+    laneX: [450,600,750],
     laneY: 0,
     spacing: 150
 }
@@ -22,11 +22,14 @@ let player = {
 }
 
 let obstacles = []
-let carColors = ['#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c']
 
-let playerImg = loadImage('')
-let obstacleImg = loadImage('')
+let playerImg
+let obstacleImg
 
+// function preload(){
+//     playerImg = loadImage('')
+//     obstacleImg = loadImage('')
+// }
 function setup(){
     let cnv = createCanvas(1200, 900)
     let x = (windowWidth - width) / 2
@@ -35,7 +38,7 @@ function setup(){
 }
 
 function draw(){
-    if (!game.started){
+    if (game.started == false){
         startScreen()
         return
     }else if (game.over){
@@ -82,18 +85,33 @@ function drawLanes(){
     road.laneY += flow
     
     if(road.laneY >= road.spacing){
-        data.lane.y = 0
+        road.laneY = 0
     }
 }
 
 function drawCar(x, y, isPlayer){
-    if(isPlayer){
-        image(playerImg, x-30, y - 50, 60, 100)
-    }else {
-        image(obstacleImg, x-30, y-50, 60, 100)
-    }
+    // if(isPlayer){
+    //     image(playerImg, x-30, y - 50, 60, 100)
+    // }else {
+    //     image(obstacleImg, x-30, y-50, 60, 100)
+    // }
+    fill('red')
+    rect(x, y, 100, 100)
 }
+function drawPothole(obs){
+    let x = obs.x
+    let y = obs.y
+    let size = obs.size
 
+    fill(58,58,58); noStroke()              //outer detail of hole
+    ellipse(x, y, size, size * 0.6)
+
+    fill('#362624')              //mud inside pothole
+    ellipse(x + 3, y + 2, size* 0.5, size*0.28)
+
+
+
+}
 function spawnObstacle(){
     let lane = floor(random(3))
     let type = random() < 0.65 ? "car" : 'pothole'
@@ -102,18 +120,17 @@ function spawnObstacle(){
         x: road.laneX[lane],
         y: -80,
         type: type,
-        col: random(carColors),
         size: type == 'pothole' ? random(35,60): 0
     })   
 }
 function moveDrawObs(){
     for (let i = obstacles.length - 1; i >= 0; i--){
-        obstacles[i].y =+ game.speed + 2
+        obstacles[i].y += game.speed + 2
 
         if(obstacles[i].y > 980){
             obstacles.splice(i, 1)
         }else if (obstacles[i].type == 'car'){
-            drawCar(obstacles[i].x, obstacles[i].y, obstacles[i].col, false)
+            drawCar(obstacles[i].x, obstacles[i].y, false)
         }else {
             drawPothole(obstacles[i])
         }
@@ -150,8 +167,7 @@ function startScreen(){
     fill('#1a1a2e'); textSize(26)
     text('PRESS SPACE', width / 2, 525)
 }
-
-function gameOver(){
+    function gameOver(){
     fill(0, 0, 0, 160); rect(0, 0, width, height)
     fill('#e74c3c'); textAlign(CENTER); textSize(70)
     text('GAME OVER', width / 2, height / 2 - 60)
