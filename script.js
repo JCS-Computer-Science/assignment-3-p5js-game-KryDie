@@ -1,14 +1,14 @@
 let game = {
     over: false,
-    started: true,
+    started: false,
     score: 0,
-    speed: 5,
+    speed: 10,
     spawnTimer: 0,
     spawnEvery: 50
 }
 
 let road = {
-    laneX: [450,600,750],
+    laneX: [422,595,772],
     laneY: 0,
     spacing: 150
 }
@@ -16,13 +16,13 @@ let road = {
 let player = {
     lane: 1,
     x: 600,
-    y: 720,
+    y: 500, 
     w: 60,
     h: 100
 }
 
 let obstacles = []
-
+ 
 let playerImg
 let obstacleImg
 
@@ -76,7 +76,7 @@ function draw(){
 }
 
 function drawLanes(){
-    let flow = 4 
+    let flow = 4 + floor(game.score/350)
     for(let i = 0; i < 10; i++){
         let yPos = road.laneY + i*road.spacing
         rect(495, yPos, 8, 80)
@@ -96,7 +96,7 @@ function drawCar(x, y, isPlayer){
     //     image(obstacleImg, x-30, y-50, 60, 100)
     // }
     fill('red')
-    rect(x, y, 100, 100)
+    rect(x-30, y-50, 60, 100)
 }
 function drawPothole(obs){
     let x = obs.x
@@ -108,9 +108,6 @@ function drawPothole(obs){
 
     fill('#362624')              //mud inside pothole
     ellipse(x + 3, y + 2, size* 0.5, size*0.28)
-
-
-
 }
 function spawnObstacle(){
     let lane = floor(random(3))
@@ -125,7 +122,7 @@ function spawnObstacle(){
 }
 function moveDrawObs(){
     for (let i = obstacles.length - 1; i >= 0; i--){
-        obstacles[i].y += game.speed + 2
+        obstacles[i].y += 8
 
         if(obstacles[i].y > 980){
             obstacles.splice(i, 1)
