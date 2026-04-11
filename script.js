@@ -24,12 +24,14 @@ let player = {
 let obstacles = []
  
 let playerImg
-let obstacleImg
+let obstacleImg = []
 
-// function preload(){
-//     playerImg = loadImage('')
-//     obstacleImg = loadImage('')
-// }
+function preload(){
+    playerImg = loadImage('imgs/Black_viper.png')
+    obstacleImg[0] = loadImage('imgs/taxi.png')
+    obstacleImg[1] = loadImage('imgs/Police.png')
+    obstacleImg[2] = loadImage('imgs/Car.png')
+}
 function setup(){
     let cnv = createCanvas(1200, 900)
     let x = (windowWidth - width) / 2
@@ -66,7 +68,7 @@ function draw(){
     }
 
     moveDrawObs()
-    drawCar(player.x, player.y, true)
+    drawCar(player.x, player.y, true,)
     checkCollision()
 
     game.score++
@@ -121,14 +123,12 @@ function drawLanes(){
     }
 }
 
-function drawCar(x, y, isPlayer){
-    // if(isPlayer){
-    //     image(playerImg, x-30, y - 50, 60, 100)
-    // }else {
-    //     image(obstacleImg, x-30, y-50, 60, 100)
-    // }
-    fill('red')
-    rect(x-30, y-50, 60, 100)
+function drawCar(x, y, isPlayer, img){
+    if(isPlayer){
+        image(playerImg, x-30, y - 50, 60, 100)
+    } else{    
+        image(obstacleImg, x-30, y-50, 60, 100)
+    }
 }
 
 function drawPothole(obs){
@@ -151,7 +151,8 @@ function spawnObstacle(){
         x: road.laneX[lane],
         y: -80,
         type: type,
-        size: type == 'pothole' ? random(35,60): 0
+        size: type == 'pothole' ? random(35,60): 0,
+        img: obstacleImg[floor(random(obstacleImg.length))]
     })   
 }
 
@@ -162,7 +163,7 @@ function moveDrawObs(){
         if(obstacles[i].y > 980){
             obstacles.splice(i, 1)
         }else if (obstacles[i].type == 'car'){
-            drawCar(obstacles[i].x, obstacles[i].y, false)
+            drawCar(obstacles[i].x, obstacles[i].y, false, obstacleImg[i].img)
         }else {
             drawPothole(obstacles[i])
         }
