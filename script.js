@@ -17,7 +17,7 @@ let player = {
     lane: 1,
     x: 600,
     y: 500, 
-    w: 60,
+    w: 200,
     h: 100
 }
 
@@ -174,9 +174,13 @@ function moveDrawObs(){
 function checkCollision(){
     for (let obs of obstacles){
         if (obs.type == 'car'){
-            if (abs(player.x - obs.x) < 52 && abs(player.y - obs.y) < 95) game.over = true
+            if (abs(player.x - obs.x) < 52 && abs(player.y - obs.y) < 95){
+                game.over = true
+            } 
         } else {
-            if (dist(player.x, player.y, obs.x, obs.y) < obs.size * 0.45 + 22) game.over = true
+            if (dist(player.x, player.y, obs.x, obs.y) < obs.size * 0.45 + 22) {
+                game.over = true
+            }
         }
     }
 }
