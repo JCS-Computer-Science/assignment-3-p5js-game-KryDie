@@ -127,7 +127,7 @@ function drawCar(x, y, isPlayer, img){
     if(isPlayer){
         image(playerImg, x-30, y - 50, 60, 100)
     } else{    
-        image(obstacleImg, x-30, y-50, 60, 100)
+        image(img, x-30, y-50, 60, 100)
     }
 }
 
@@ -149,7 +149,7 @@ function spawnObstacle(){
     obstacles.push({
         lane: lane,
         x: road.laneX[lane],
-        y: -80,
+        y: -100,
         type: type,
         size: type == 'pothole' ? random(35,60): 0,
         img: obstacleImg[floor(random(obstacleImg.length))]
@@ -163,7 +163,7 @@ function moveDrawObs(){
         if(obstacles[i].y > 980){
             obstacles.splice(i, 1)
         }else if (obstacles[i].type == 'car'){
-            drawCar(obstacles[i].x, obstacles[i].y, false, obstacleImg[i].img)
+            drawCar(obstacles[i].x, obstacles[i].y, false, obstacles[i].img)
         }else {
             drawPothole(obstacles[i])
         }
