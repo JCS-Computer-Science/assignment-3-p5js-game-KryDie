@@ -8,7 +8,7 @@ let game = {
 }
 
 let road = {
-    laneX: [422,595,772],
+    laneX: [422,595,750],
     laneY: 0,
     spacing: 150
 }
@@ -64,7 +64,7 @@ function draw(){
     if(game.spawnTimer >= game.spawnEvery){
         spawnObstacle()
         game.spawnTimer = 0
-        game.spawnEvery = round(random(35, 65))
+        game.spawnEvery = round(random(35, 65) - game.speed)
     }
 
     moveDrawObs()
@@ -72,7 +72,7 @@ function draw(){
     checkCollision()
 
     game.score++
-    game.speed = 5 + floor(game.score / 300)
+    game.speed = min(15, 5 + floor(game.score / 500))
 
     drawHud()
 }
@@ -113,8 +113,8 @@ function drawLanes(){
     let flow = 4 + floor(game.score/350)
     for(let i = 0; i < 10; i++){
         let yPos = road.laneY + i*road.spacing
-        rect(495, yPos, 8, 80)
-        rect(695, yPos, 8, 80)
+        rect(510, yPos, 8, 80)
+        rect(690, yPos, 8, 80)
     }
     road.laneY += flow
     
@@ -125,9 +125,9 @@ function drawLanes(){
 
 function drawCar(x, y, isPlayer, img){
     if(isPlayer){
-        image(playerImg, x-30, y - 50, 60, 100)
+        image(playerImg, x-30, y - 50, 90, 100)
     } else{    
-        image(img, x-30, y-50, 60, 100)
+        image(img, x-30, y-50, 90, 100)
     }
 }
 
@@ -145,20 +145,29 @@ function drawPothole(obs){
 
 function spawnObstacle(){
     let lane = floor(random(3))
-    let type = random() < 0.65 ? "car" : 'pothole'
+    let type;
+    let size = 0
+
+    if(random() < 0.6) {
+        type = 'car'
+    } else {
+        type = 'pothole'
+        size = random(30,60)
+    }
+
     obstacles.push({
         lane: lane,
         x: road.laneX[lane],
         y: -100,
         type: type,
-        size: type == 'pothole' ? random(35,60): 0,
+        size: size,
         img: obstacleImg[floor(random(obstacleImg.length))]
-    })   
+    })
 }
 
 function moveDrawObs(){
     for (let i = obstacles.length - 1; i >= 0; i--){
-        obstacles[i].y += 8
+        obstacles[i].y += game.speed
 
         if(obstacles[i].y > 980){
             obstacles.splice(i, 1)
