@@ -1,12 +1,9 @@
 class Game {
     constructor(assets){
-        console.log(assets);
-
-
         this.over = false
         this.started = false
         this.score = 0
-        this.speed = 10
+        this.speed = 5
         this.spawnTimer = 0
         this.spawnEvery = 50
         this.assets = assets
@@ -16,8 +13,14 @@ class Game {
         this.obstacles = []
 
     }
-
+  
     update(){
+        this.score++
+
+        if(this.score % 300 == 0 && this.speed < 20){
+            this.speed++
+        }
+
         this.spawnTimer++
 
         if(this.spawnTimer >= this.spawnEvery){
@@ -25,7 +28,11 @@ class Game {
             this.spawnTimer = 0
             this.spawnEvery = round(random(35, 65)- this.speed)
         }
+
+        this.moveObstacle()
+        this.checkCollision()
     }
+
     startScreen(){
         background('#0f122e')
         fill('#edf10f')
@@ -49,7 +56,7 @@ class Game {
 
     draw(){
         background('green')
-        this.road.draw()
+        this.road.draw(this.speed)
         this.player.draw()
 
         for(let obs of this.obstacles) {
@@ -57,6 +64,28 @@ class Game {
         }
 
         this.drawHud()
+    }
+
+    gameOver(){
+        fill(0, 0, 0, 160)
+        noStroke()
+        rect(0, 0, width, height)
+
+        fill('#e74c3c')
+        textAlign(CENTER)
+        textSize(72)
+        text('GAME OVER', width / 2, 340)
+
+        fill('white')
+        textSize(28)
+        text('Score: ' + floor(this.score / 10), width / 2, 410)
+
+        fill('#2ecc71')
+        rect(width / 2 - 110, 460, 220, 55, 10)
+
+        fill('#1a1a2e')
+        textSize(26)
+        text('PRESS SPACE', width / 2, 495)
     }
 
     spawnObstacle(){
@@ -101,8 +130,7 @@ class Game {
         this.over = false
         this.spawnTimer = 0
         this.spawnEvery = 55
-        this.player.lane = 1
-        this.player.x = road.laneX[player.lane]
+        this.player.changeLanes(0, true)
     }
 }
 
@@ -125,13 +153,14 @@ class Player {
         image(this.img, this.x - 30, this.y - 50, 90, 100)
     }
 
-    changeLanes(direction = 0, reset = false){
-        if(reset){
-            this.lane = Math.floor(this.road.laneX.length / 2)
-        } else {
-            this.lane = constrain(this.lane + direction, 0, this.road.laneX.length - 1) //lanes stay between 1-3
-        }
-    }
+   changeLanes(direction){
+    this.lane = constrain(this.lane + direction, 0, this.road,laneX.length -1)
+   }
+
+   resetLane(){
+    this.lane = 1
+    this.x = this.road.laneX[this.lane]
+   }
 }
 
 class Road {
@@ -141,7 +170,7 @@ class Road {
         this.spacing = 150
     }
     
-    draw(){
+    draw(speed = 5){
         fill(90,90,90); noStroke()  //road
         rect(350,0,500,900)
         fill('yellow')  //highlight
@@ -150,11 +179,11 @@ class Road {
 
 
         fill('white')
-        this.drawLanes()
+        this.drawLanes(speed)
     }
 
-    drawLanes(){
-        let flow = 4
+    drawLanes(speed){
+        //let flow = 4
 
         for(let i = 0; i < 10; i++){
             let yPos = this.laneY + i *this.spacing
@@ -162,7 +191,7 @@ class Road {
             rect(690, yPos, 8, 80)
         }
 
-        this.laneY += flow
+        this.laneY += speed
 
         if(this.laneY >= this.spacing){
             this.laneY = 0
@@ -175,7 +204,7 @@ class Obstacle {
         this.road = road
         this.lane = floor(random(3))
         this.x = this.road.laneX[this.lane]
-        this.y = 100
+        this.y = -50
     }
 
     update(speed){
@@ -224,4 +253,3 @@ class Pothole extends Obstacle {
         return dist(player.x, player.y, this.x, this.y) < this.size * 0.45 + 22
     }
 }
-

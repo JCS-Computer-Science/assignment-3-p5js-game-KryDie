@@ -14,7 +14,6 @@ function preload(){
 function setup(){
     createCanvas(1200, 900)
     game = new Game(assets)
-    console.log(assets)
 }
 
 function draw(){
@@ -24,7 +23,8 @@ function draw(){
     }
 
     if(game.over){
-        gameOver()
+        game.draw()
+        game.gameOver()
         return
     }
 
