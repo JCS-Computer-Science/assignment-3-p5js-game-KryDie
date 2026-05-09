@@ -33,6 +33,14 @@ class Game {
         this.checkCollision()
     }
 
+    handleKey(clicked){
+        if(clicked == 37 && this.player.lane > 0){
+            this.player.lane--
+        } else if(clicked == 39 && this.player.lane < 2){
+            this.player.lane++
+        }
+    }
+
     startScreen(){
         background('#0f122e')
         fill('#edf10f')
@@ -145,8 +153,8 @@ class Player {
         this.h = 100
     }
 
-    update(){
-        this.x = lerp(this.x, this.road.laneX[this.lane], 0.12) //smoother movement
+    update() {
+        this.x = lerp(this.x, this.road.laneX[this.lane], 0.12)
     }
 
     draw(){

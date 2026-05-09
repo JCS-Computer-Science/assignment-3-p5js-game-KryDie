@@ -12,7 +12,10 @@ function preload(){
 }
 
 function setup(){
-    createCanvas(1200, 900)
+    let cnv = createCanvas(1200, 900)
+    let x = (windowWidth - width) / 2
+    let y = (windowHeight - height) / 2
+    cnv.position(x, y)
     game = new Game(assets)
 }
 
@@ -43,9 +46,9 @@ function keyPressed(){
         return
     }
 
-    if(keyCode == LEFT_ARROW){
-        game.player.changeLanes(-1)
-    } else if(keyCode == RIGHT_ARROW){
-        game.player.changeLanes(1)
-    }
+    /* if(keyCode == LEFT_ARROW && game.player.lane > 0){
+        game.player.lane--
+    } else if(keyCode == RIGHT_ARROW && game.player.lane < 2){
+        game.player.lane++
+    } */
 }
