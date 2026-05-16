@@ -26,7 +26,6 @@ function draw(){
     }
 
     if(game.over){
-        game.draw()
         game.gameOver()
         return
     }
@@ -46,9 +45,9 @@ function keyPressed(){
         return
     }
 
-    /* if(keyCode == LEFT_ARROW && game.player.lane > 0){
+    if(keyCode == LEFT_ARROW && game.player.lane > 0){
         game.player.lane--
     } else if(keyCode == RIGHT_ARROW && game.player.lane < 2){
         game.player.lane++
-    } */
+    } 
 }

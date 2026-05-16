@@ -14,31 +14,32 @@ class Game {
 
     }
   
-    update(){
-        this.score++
-
-        if(this.score % 300 == 0 && this.speed < 20){
-            this.speed++
-        }
+    update() {
+        this.player.x = lerp(this.player.x, this.road.laneX[this.player.lane], 0.12) //smoother movement
 
         this.spawnTimer++
-
-        if(this.spawnTimer >= this.spawnEvery){
+        if (this.spawnTimer >= this.spawnEvery) {
             this.spawnObstacle()
             this.spawnTimer = 0
-            this.spawnEvery = round(random(35, 65)- this.speed)
+            this.spawnEvery = round(random(35, 65) - this.speed)
         }
 
-        this.moveObstacle()
-        this.checkCollision()
-    }
-
-    handleKey(clicked){
-        if(clicked == 37 && this.player.lane > 0){
-            this.player.lane--
-        } else if(clicked == 39 && this.player.lane < 2){
-            this.player.lane++
+        for (let i = this.obstacles.length - 1; i >= 0; i--) {
+            this.obstacles[i].update(this.speed)
+            
+            if (this.obstacles[i].offScreen()){
+                this.obstacles.splice(i, 1)
+            } 
         }
+
+        for (let obs of this.obstacles) {
+            if (obs.collides(this.player)){
+                this.over = true
+            } 
+        }
+
+        this.score++
+        this.speed = min(15, 5 + floor(this.score / 500))
     }
 
     startScreen(){
@@ -138,7 +139,8 @@ class Game {
         this.over = false
         this.spawnTimer = 0
         this.spawnEvery = 55
-        this.player.changeLanes(0, true)
+        this.player.lane = 1
+        this.player.x = this.road.laneX[1]
     }
 }
 
@@ -149,26 +151,18 @@ class Player {
         this.lane = 1
         this.x = this.road.laneX[this.lane]
         this.y = 500 
-        this.w = 200
-        this.h = 100
+        /* this.w = 200
+        this.h = 100 */
     }
 
-    update() {
+   /*  update() {
         this.x = lerp(this.x, this.road.laneX[this.lane], 0.12)
-    }
+    } */
 
     draw(){
         image(this.img, this.x - 30, this.y - 50, 90, 100)
     }
 
-   changeLanes(direction){
-    this.lane = constrain(this.lane + direction, 0, this.road,laneX.length -1)
-   }
-
-   resetLane(){
-    this.lane = 1
-    this.x = this.road.laneX[this.lane]
-   }
 }
 
 class Road {
@@ -178,33 +172,26 @@ class Road {
         this.spacing = 150
     }
     
-    draw(speed = 5){
-        fill(90,90,90); noStroke()  //road
-        rect(350,0,500,900)
-        fill('yellow')  //highlight
+    draw(score){
+        fill(90, 90, 90); noStroke()
+        rect(350, 0, 500, 900)
+
+        //outer lines
+        fill('yellow')
         rect(350, 0, 8, 900)
         rect(842, 0, 8, 900)
 
-
+        let flow = 4 + floor(score / 300)
         fill('white')
-        this.drawLanes(speed)
-    }
 
-    drawLanes(speed){
-        //let flow = 4
-
-        for(let i = 0; i < 10; i++){
-            let yPos = this.laneY + i *this.spacing
+        for (let i = 0; i < 10; i++) {
+            let yPos = this.laneY + i * this.spacing
             rect(510, yPos, 8, 80)
             rect(690, yPos, 8, 80)
         }
-
-        this.laneY += speed
-
-        if(this.laneY >= this.spacing){
-            this.laneY = 0
-        }
+        this.laneY = (this.laneY + flow) % this.spacing
     }
+
 }
 
 class Obstacle {
@@ -212,7 +199,7 @@ class Obstacle {
         this.road = road
         this.lane = floor(random(3))
         this.x = this.road.laneX[this.lane]
-        this.y = -50
+        this.y = -100
     }
 
     update(speed){
@@ -223,7 +210,7 @@ class Obstacle {
         return this.y > height + 50
     }
 
-    collides(player){
+    collides(){
         return false
     }
 }
